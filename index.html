@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A mobile-friendly life tracker for Magic: The Gathering and other tabletop games. Track multiple players' life totals with customizable colors and settings.">
+    <title>Life Tracker</title>
+    <link rel="stylesheet" href="styles.min.css">
+</head>
+<body>
+    <main>
+
+        <h1 class="sr-only">Life Tracker</h1>
+        <div id="playerContainer"></div>
+        
+        <button id="settingsButton" class="hamburger" aria-label="settings">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <div id="settingsOverlay" class="settings-overlay">
+            <div class="settings-modal">
+                <h2>Settings</h2>
+                
+                <div id="settingsMenu" class="settings-view active">
+                    <button class="menu-btn" data-menu="players">Number of Players</button>
+                    <button class="menu-btn" data-menu="life">Default Life Total</button>
+                    <button id="rollDiceMenuButton" class="menu-btn">High Roll</button>
+                    <button id="closeSettingsButton" class="close-button">Close</button>
+                </div>
+                
+                <div id="playersView" class="settings-view">
+                    <h3>Number of Players</h3>
+                    <div class="button-group">
+                        <button class="player-btn" data-players="1">1</button>
+                        <button class="player-btn" data-players="2">2</button>
+                        <button class="player-btn" data-players="3">3</button>
+                        <button class="player-btn" data-players="4">4</button>
+                        <button class="player-btn" data-players="5">5</button>
+                        <button class="player-btn" data-players="6">6</button>
+                    </div>
+                    <button class="back-btn" data-back="menu">Back</button>
+                </div>
+                
+                <div id="lifeView" class="settings-view">
+                    <h3>Default Life Total</h3>
+                    <div class="button-group">
+                        <button class="life-btn" data-life="20">20</button>
+                        <button class="life-btn" data-life="30">30</button>
+                        <button class="life-btn" data-life="40">40</button>
+                    </div>
+                    <div id="customLifeContainer">
+                        <input type="number" id="customLifeInput" placeholder="Enter custom life total" min="1">
+                        <button id="customLifeBtn">Set Custom</button>
+                    </div>
+                    <button class="back-btn" data-back="menu">Back</button>
+                </div>
+    
+            </div>
+        </div>
+    </main>
+    
+    <script defer src="scripts.js"></script>
+</body>
+</html>
