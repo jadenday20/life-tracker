@@ -1,0 +1,10 @@
+{
+  "name": "Life Tracker",
+  "short_name": "Life Tracker",
+  "description": "A mobile-friendly life tracker for Magic: The Gathering and other tabletop games",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#ffffff",
+  "theme_color": "#333333"
+}
