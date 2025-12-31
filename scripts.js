@@ -39,6 +39,17 @@ function loadGameState() {
         defaultLifeTotal = gameState.defaultLifeTotal || 20;
         playerColors = gameState.playerColors || {};
         playerTextColors = gameState.playerTextColors || {};
+    } else {
+        // First-time user defaults: 4 players, 40 life each, first 4 colors
+        userCount = 4;
+        defaultLifeTotal = 40;
+        playerLifeTotals = [40, 40, 40, 40];
+        
+        // Assign first 4 colors
+        for (let i = 0; i < 4; i++) {
+            playerColors[i] = colorOptions[i].background;
+            playerTextColors[i] = colorOptions[i].text;
+        }
     }
 }
 
