@@ -375,7 +375,7 @@ function togglePlayerColorPicker(playerIndex) {
         const btn = document.createElement('button');
         btn.className = 'player-color-option';
         btn.style.backgroundColor = option;
-        btn.textContent = '●';
+        btn.textContent = '';
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
             playerColors[playerIndex] = option;
