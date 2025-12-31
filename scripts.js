@@ -2,30 +2,50 @@ let userCount = 1;
 let playerLifeTotals = [];
 let defaultLifeTotal = 20;
 let playerColors = {}; // Per-player background colors
-let playerTextColors = {}; // Per-player text colors
 let pendingChanges = {}; // Track cumulative changes per player
 let changeTimers = {}; // Track timers per player
 let colorPickersActive = new Set(); // Track which players have color pickers open
 
 // Default color options
 const colorOptions = [
-    { text: '#323232', background: '#efe8bf' },
-    { text: '#323232', background: '#b4c8e3' },
-    { text: '#323232', background: '#989297' },
-    { text: '#323232', background: '#e8a9a3' },
-    { text: '#323232', background: '#bdd3c1' },
-    { text: '#323232', background: '#ffb6d9' },
-    { text: '#323232', background: '#d8b5e8' },
-    { text: '#323232', background: '#f5ca9e' }
+    '#efe8bf',
+    '#b4c8e3',
+    '#989297',
+    '#e8a9a3',
+    '#bdd3c1',
+    '#ffb6d9',
+    '#d8b5e8',
+    '#f5ca9e'
 ];
+
+function getFirstUnusedColor(playerIndex) {
+    // Find the first color in the list that is not being used by any other player
+    for (let i = 0; i < colorOptions.length; i++) {
+        const color = colorOptions[i];
+        let isUsed = false;
+        
+        for (let j = 0; j < userCount; j++) {
+            if (j !== playerIndex && playerColors[j] === color) {
+                isUsed = true;
+                break;
+            }
+        }
+        
+        if (!isUsed) {
+            return color;
+        }
+    }
+    
+    // If all colors are used, return the first color
+    return colorOptions[0];
+}
 
 function saveGameState() {
     const gameState = {
         userCount: userCount,
         playerLifeTotals: playerLifeTotals,
         defaultLifeTotal: defaultLifeTotal,
-        playerColors: playerColors,
-        playerTextColors: playerTextColors
+        playerColors: playerColors
     };
     localStorage.setItem('lifeTrackerState', JSON.stringify(gameState));
 }
@@ -38,7 +58,6 @@ function loadGameState() {
         playerLifeTotals = gameState.playerLifeTotals || [];
         defaultLifeTotal = gameState.defaultLifeTotal || 20;
         playerColors = gameState.playerColors || {};
-        playerTextColors = gameState.playerTextColors || {};
     } else {
         // First-time user defaults: 4 players, 40 life each, first 4 colors
         userCount = 4;
@@ -47,8 +66,7 @@ function loadGameState() {
         
         // Assign first 4 colors
         for (let i = 0; i < 4; i++) {
-            playerColors[i] = colorOptions[i].background;
-            playerTextColors[i] = colorOptions[i].text;
+            playerColors[i] = colorOptions[i];
         }
     }
 }
@@ -60,10 +78,16 @@ function createPlayer(playerIndex, lifeTotal) {
     player.dataset.playerIndex = playerIndex;
     
     // Set default colors for this player
-    const bgColor = playerColors[playerIndex] || '#efe8bf';
-    const textColor = playerTextColors[playerIndex] || '#323232';
+    let bgColor = playerColors[playerIndex];
+    
+    if (!bgColor) {
+        // Get the first unused color
+        const defaultColor = getFirstUnusedColor(playerIndex);
+        bgColor = defaultColor;
+        playerColors[playerIndex] = bgColor;
+    }
+    
     player.style.backgroundColor = bgColor;
-    player.style.color = textColor;
     
     const lifeTotalElement = document.createElement('span');
     lifeTotalElement.className = 'lifeTotal';
@@ -172,16 +196,19 @@ function openSetLifeModal(playerIndex) {
     const modal = document.createElement('div');
     modal.className = 'life-modal-overlay';
     
-    const modalContent = document.createElement('div');
+    const modalContent = document.createElement('form');
     modalContent.className = 'life-modal';
     
     const title = document.createElement('h3');
+    title.id = `life-modal-title-${playerIndex}`;
     title.textContent = 'Set Life Total';
     modalContent.appendChild(title);
     
     const input = document.createElement('input');
     input.type = 'number';
     input.className = 'life-input';
+    input.setAttribute('aria-labelledby', `life-modal-title-${playerIndex}`);
+    input.name = 'lifeTotal';
     input.value = playerLifeTotals[playerIndex];
     input.min = '0';
     modalContent.appendChild(input);
@@ -190,6 +217,7 @@ function openSetLifeModal(playerIndex) {
     buttonContainer.className = 'modal-buttons';
     
     const cancelBtn = document.createElement('button');
+    cancelBtn.type = 'button';
     cancelBtn.textContent = 'Cancel';
     cancelBtn.className = 'modal-btn cancel-btn';
     cancelBtn.addEventListener('click', function() {
@@ -198,9 +226,19 @@ function openSetLifeModal(playerIndex) {
     buttonContainer.appendChild(cancelBtn);
     
     const confirmBtn = document.createElement('button');
+    confirmBtn.type = 'submit';
     confirmBtn.textContent = 'Set';
     confirmBtn.className = 'modal-btn confirm-btn';
-    confirmBtn.addEventListener('click', function() {
+    buttonContainer.appendChild(confirmBtn);
+    
+    modalContent.appendChild(buttonContainer);
+    modal.appendChild(modalContent);
+    
+    document.body.appendChild(modal);
+    
+    // Handle form submission
+    modalContent.addEventListener('submit', function(e) {
+        e.preventDefault();
         const newValue = parseInt(input.value);
         if (!isNaN(newValue)) {
             playerLifeTotals[playerIndex] = newValue;
@@ -208,12 +246,6 @@ function openSetLifeModal(playerIndex) {
         }
         modal.remove();
     });
-    buttonContainer.appendChild(confirmBtn);
-    
-    modalContent.appendChild(buttonContainer);
-    modal.appendChild(modalContent);
-    
-    document.body.appendChild(modal);
     
     // Focus and select the input
     input.focus();
@@ -342,15 +374,12 @@ function togglePlayerColorPicker(playerIndex) {
     colorOptions.forEach(option => {
         const btn = document.createElement('button');
         btn.className = 'player-color-option';
-        btn.style.backgroundColor = option.background;
-        btn.style.color = option.text;
+        btn.style.backgroundColor = option;
         btn.textContent = '●';
         btn.addEventListener('click', function(e) {
             e.stopPropagation();
-            playerColors[playerIndex] = option.background;
-            playerTextColors[playerIndex] = option.text;
-            player.style.backgroundColor = option.background;
-            player.style.color = option.text;
+            playerColors[playerIndex] = option;
+            player.style.backgroundColor = option;
             saveGameState();
             picker.remove();
             colorPickersActive.delete(playerIndex);

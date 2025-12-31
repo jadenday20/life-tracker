@@ -64,6 +64,7 @@ button {
     position: absolute;
     top: 50%;
     left: 50%;
+    color: #323232;
     transform: translate(-50%, -50%);
     text-shadow: 0 -1px 2px hsla(0, 0%, 100%, 0.7),0 1px 2px hsla(0, 0%, 0%, 0.7);
 }
@@ -291,7 +292,7 @@ body[data-player-count="6"] .hamburger {
     display: flex;
 }
 
-.settings-modal {
+.settings-modal, .life-modal {
     background-color: white;
     border-radius: 10px;
     padding: 30px;
