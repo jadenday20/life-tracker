@@ -538,6 +538,10 @@ body[data-player-count="6"] .hamburger {
     font-weight: bold;
 }
 
+.lifeButton {
+    font-size: clamp(1rem, 5vw, 2rem);
+}
+
 .color-picker-btn {
     position: absolute;
     bottom: 10px;

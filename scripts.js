@@ -129,7 +129,7 @@ function createPlayer(playerIndex, lifeTotal) {
     decrementButton.classList.add('lifeButton', 'decrement');
     const decrementSpan = document.createElement('span');
     decrementSpan.className = 'button-text';
-    decrementSpan.textContent = '-';
+    decrementSpan.textContent = '−';
     decrementButton.appendChild(decrementSpan);
     decrementButton.addEventListener('click', function() {
         playerLifeTotals[playerIndex]--;
