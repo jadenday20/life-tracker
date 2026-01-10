@@ -207,6 +207,7 @@ function openSetLifeModal(playerIndex) {
     const input = document.createElement('input');
     input.type = 'number';
     input.className = 'life-input';
+    input.inputMode = 'numeric';
     input.setAttribute('aria-labelledby', `life-modal-title-${playerIndex}`);
     input.name = 'lifeTotal';
     input.value = playerLifeTotals[playerIndex];
